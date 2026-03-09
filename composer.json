@@ -1,0 +1,16 @@
+{
+    "name": "custom/whatsnew",
+    "type": "glpi-plugin",
+    "description": "Displays a What's New modal to users when opening GLPI",
+    "version": "1.0.0",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "glpi/glpi": ">=11.0.0"
+    },
+    "extra": {
+        "glpi-plugin-info": {
+            "name": "What's New",
+            "key": "whatsnew"
+        }
+    }
+}
