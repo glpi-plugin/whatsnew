@@ -101,12 +101,6 @@ function plugin_whatsnew_install() {
 }
 
 function plugin_whatsnew_uninstall() {
-    $migration = new Migration(PLUGIN_WHATSNEW_VERSION);
-    $migration->addPostQuery("DROP TABLE IF EXISTS `glpi_plugin_whatsnew_announcements`");
-    $migration->addPostQuery("DROP TABLE IF EXISTS `glpi_plugin_whatsnew_user_dismissals`");
-    $migration->addPostQuery("DROP TABLE IF EXISTS `glpi_plugin_whatsnew_history`");
-    $migration->executeMigration();
-
     PluginWhatsnewProfile::removeRights();
 
     return true;

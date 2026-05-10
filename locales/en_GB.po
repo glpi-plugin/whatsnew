@@ -23,8 +23,8 @@ msgstr "What's New – Configuration"
 msgid "What's New – Announcement Editor"
 msgstr "What's New – Announcement Editor"
 
-msgid "Each profile can have its own announcement. Saving regenerates the version hash — all matching users will see the modal again."
-msgstr "Each profile can have its own announcement. Saving regenerates the version hash — all matching users will see the modal again."
+msgid "Each audience can have its own announcement. Saving regenerates the version hash — all matching users will see the modal again."
+msgstr "Each audience can have its own announcement. Saving regenerates the version hash — all matching users will see the modal again."
 
 msgid "Technicians (Central interface)"
 msgstr "Technicians (Central interface)"
@@ -53,8 +53,17 @@ msgstr "Version hash:"
 msgid "History"
 msgstr "History"
 
-msgid "last 10 saves"
-msgstr "last 10 saves"
+msgid "last 6 months"
+msgstr "last 6 months"
+
+msgid "Past Announcements"
+msgstr "Past Announcements"
+
+msgid "What's New – Past Announcements"
+msgstr "What's New – Past Announcements"
+
+msgid "No past announcements found."
+msgstr "No past announcements found."
 
 msgid "Announcement updated. All users will see the modal again."
 msgstr "Announcement updated. All users will see the modal again."

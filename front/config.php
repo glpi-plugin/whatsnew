@@ -40,13 +40,13 @@ if (isset($_POST['update'])) {
 }
 
 // --- Render page ---
-Html::header(__("What's New - Configuration", 'whatsnew'), $_SERVER['PHP_SELF'], 'config', 'plugins');
+Html::header(__("What's New – Configuration", 'whatsnew'), $_SERVER['PHP_SELF'], 'config', 'plugins');
 
 $profile_types = PluginWhatsnewAnnouncement::getProfileTypes();
 
 echo '<div class="container-fluid mt-3">';
-echo '<h2>' . __("What's New - Announcement Editor", 'whatsnew') . '</h2>';
-echo '<p class="text-muted">' . __('Each audience can have its own announcement. Saving regenerates the version hash - all matching users will see the modal again.', 'whatsnew') . '</p>';
+echo '<h2>' . __("What's New – Announcement Editor", 'whatsnew') . '</h2>';
+echo '<p class="text-muted">' . __('Each audience can have its own announcement. Saving regenerates the version hash — all matching users will see the modal again.', 'whatsnew') . '</p>';
 
 foreach ($profile_types as $profile_type => $label) {
 
@@ -95,7 +95,6 @@ foreach ($profile_types as $profile_type => $label) {
         'FROM'  => 'glpi_plugin_whatsnew_history',
         'WHERE' => ['profile_type' => $profile_type],
         'ORDER' => 'date_save DESC',
-        'LIMIT' => 10,
     ]);
 
     if ($history->count() > 0) {
@@ -104,7 +103,7 @@ foreach ($profile_types as $profile_type => $label) {
         echo '<hr>';
         echo '<h6 class="mt-3 mb-2 text-muted">'
             . __('History', 'whatsnew')
-            . ' <small>(' . __('last 10 saves', 'whatsnew') . ')</small></h6>';
+            . ' <small>(' . __('last 6 months', 'whatsnew') . ')</small></h6>';
         echo '<div class="accordion" id="history_' . $profile_type . '">';
 
         $i = 0;

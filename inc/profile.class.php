@@ -79,9 +79,25 @@ class PluginWhatsnewProfile extends CommonDBTM {
     static function addDefaultProfileRights() {
         global $DB;
 
-        ProfileRight::addProfileRights(['plugin_whatsnew_announcement']);
+        // addProfileRights() does a bare INSERT for every profile. On reinstall
+        // those rows already exist, so skip if any are present.
+        $rights_exist = $DB->request([
+            'FROM'  => 'glpi_profilerights',
+            'WHERE' => ['name' => 'plugin_whatsnew_announcement'],
+            'LIMIT' => 1,
+        ]);
+        if ($rights_exist->count() === 0) {
+            ProfileRight::addProfileRights(['plugin_whatsnew_announcement']);
+        }
 
-        $super_admin_id = Profile::getSuperAdminID();
+        $profile_result = $DB->request([
+            'SELECT' => ['id'],
+            'FROM'   => 'glpi_profiles',
+            'WHERE'  => ['name' => 'Super-Admin'],
+            'LIMIT'  => 1,
+        ]);
+        $profile_row    = $profile_result->current();
+        $super_admin_id = $profile_row ? (int) $profile_row['id'] : 0;
         if (!$super_admin_id) {
             return;
         }

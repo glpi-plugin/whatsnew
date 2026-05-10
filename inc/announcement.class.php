@@ -194,6 +194,7 @@ class PluginWhatsnewAnnouncement extends CommonDBTM {
         // Purge dismissal records that no longer correspond to any active announcement.
         // This keeps the dismissals table lean over time.
         self::purgeOrphanedDismissals();
+        self::purgeOldHistory();
 
         return $hash;
     }
@@ -225,6 +226,18 @@ class PluginWhatsnewAnnouncement extends CommonDBTM {
     }
 
     /**
+     * Delete history records older than 6 months.
+     * Called automatically on every save to enforce retention policy.
+     */
+    static function purgeOldHistory(): void {
+        global $DB;
+        $cutoff = date('Y-m-d H:i:s', strtotime('-6 months'));
+        $DB->delete('glpi_plugin_whatsnew_history', [
+            'date_save' => ['<', $cutoff],
+        ]);
+    }
+
+    /**
      * Return all valid profile types as a key => label array.
      */
     static function getProfileTypes(): array {
@@ -233,5 +246,29 @@ class PluginWhatsnewAnnouncement extends CommonDBTM {
             self::PROFILE_HELPDESK => __('Self-Service (Helpdesk interface)', 'whatsnew'),
             self::PROFILE_ALL      => __('All users (fallback)', 'whatsnew'),
         ];
+    }
+
+    /**
+     * Fetch history entries visible to a given interface type (central or helpdesk).
+     * Returns entries for the interface's own profile_type plus PROFILE_ALL, newest first.
+     * The table is already pruned to 6 months by purgeOldHistory().
+     */
+    static function getHistoryForInterface(string $interface): array {
+        global $DB;
+
+        $allowed = [self::PROFILE_CENTRAL, self::PROFILE_HELPDESK];
+        if (!in_array($interface, $allowed, true)) {
+            return [];
+        }
+
+        $rows = [];
+        foreach ($DB->request([
+            'FROM'  => 'glpi_plugin_whatsnew_history',
+            'WHERE' => ['profile_type' => [$interface, self::PROFILE_ALL]],
+            'ORDER' => 'date_save DESC',
+        ]) as $row) {
+            $rows[] = $row;
+        }
+        return $rows;
     }
 }
