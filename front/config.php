@@ -106,13 +106,18 @@ foreach ($profile_types as $profile_type => $label) {
             . ' <small>(' . __('last 6 months', 'whatsnew') . ')</small></h6>';
         echo '<div class="accordion" id="history_' . $profile_type . '">';
 
+        $user_cache = [];
         $i = 0;
         foreach ($history as $entry) {
             $i++;
             $entry_id = 'hist_' . $profile_type . '_' . $i;
-            $user     = new User();
-            $user->getFromDB($entry['saved_by']);
-            $saved_by = htmlspecialchars($user->getFriendlyName() ?: __('Unknown'), ENT_QUOTES, 'UTF-8');
+            $uid      = $entry['saved_by'];
+            if (!isset($user_cache[$uid])) {
+                $u = new User();
+                $u->getFromDB($uid);
+                $user_cache[$uid] = $u;
+            }
+            $saved_by = htmlspecialchars($user_cache[$uid]->getFriendlyName() ?: __('Unknown'), ENT_QUOTES, 'UTF-8');
             $date     = htmlspecialchars(Html::convDateTime($entry['date_save']), ENT_QUOTES, 'UTF-8');
 
             // Badge the history entry that matches the currently active content

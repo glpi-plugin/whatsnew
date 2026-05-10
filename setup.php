@@ -53,7 +53,7 @@ function plugin_whatsnew_check_config()        { return true; }
 function plugin_whatsnew_display() {
     global $CFG_GLPI, $DB;
 
-    if (!isset($_SESSION['glpiID'])) return;
+    if (!Session::getLoginUserID()) return;
 
     static $displayed = false;
     if ($displayed) return;
@@ -67,7 +67,7 @@ function plugin_whatsnew_display() {
     if ($announcement === null) return;
 
     $hash       = $announcement['version_hash'];
-    $user_id    = (int) $_SESSION['glpiID'];
+    $user_id    = (int) Session::getLoginUserID();
     $force_show = isset($_GET['whatsnew']) && $_GET['whatsnew'] === '1';
     $dismissed  = PluginWhatsnewAnnouncement::isUserDismissed($user_id, $hash);
     $show_modal = !$dismissed || $force_show;

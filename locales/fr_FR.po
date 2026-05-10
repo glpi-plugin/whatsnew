@@ -41,14 +41,8 @@ msgstr "Titre"
 msgid "Content"
 msgstr "Contenu"
 
-msgid "Supports **bold** and line breaks."
-msgstr "Supporte le **gras** et les sauts de ligne."
-
 msgid "Save & Notify All Users"
 msgstr "Enregistrer et notifier tous les utilisateurs"
-
-msgid "Version hash:"
-msgstr "Hash de version :"
 
 msgid "History"
 msgstr "Historique"
@@ -73,9 +67,6 @@ msgstr "Annonce créée."
 
 msgid "Title and content are required."
 msgstr "Le titre et le contenu sont obligatoires."
-
-msgid "No active announcement found. Check database installation."
-msgstr "Aucune annonce active trouvée. Vérifiez l'installation de la base de données."
 
 msgid "What's New – Permissions"
 msgstr "Nouveautés – Permissions"
