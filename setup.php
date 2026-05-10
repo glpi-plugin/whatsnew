@@ -129,8 +129,7 @@ function plugin_whatsnew_render_modal(array $tpl): void {
 </div>
 
 <div id="whatsnew-fab-group">
-  <a href="{$archive_url}" id="whatsnew-archive-fab" title="{$lbl_archive}">{$lbl_archive}</a>
-  <button type="button" id="whatsnew-reopen-btn" onclick="whatsnewOpen()" title="{$lbl_reopen}" aria-label="{$lbl_reopen}">&#9432;</button>
+  <button type="button" id="whatsnew-reopen-btn" onclick="whatsnewOpen()" title="{$lbl_reopen}" aria-label="{$lbl_reopen}">&#128227;</button>
 </div>
 
 <style>
@@ -149,8 +148,8 @@ function plugin_whatsnew_render_modal(array $tpl): void {
 #whatsnew-fab-group{position:fixed;bottom:18px;right:18px;z-index:99998;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
 #whatsnew-reopen-btn{background:var(--glpi-mainmenu-bg,var(--bs-primary));color:var(--glpi-mainmenu-fg,#fff);border:none;border-radius:50%;width:38px;height:38px;font-size:1.2rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center}
 #whatsnew-reopen-btn:hover{filter:brightness(1.15)}
-#whatsnew-archive-fab{background:rgba(0,0,0,.6);color:#fff;text-decoration:none;font-size:.75rem;padding:3px 10px;border-radius:10px;white-space:nowrap}
-#whatsnew-archive-fab:hover{background:rgba(0,0,0,.8);color:#fff}
+@keyframes whatsnew-jump{0%,100%{transform:translateY(0)}20%{transform:translateY(-10px)}40%{transform:translateY(-5px)}60%{transform:translateY(-8px)}80%{transform:translateY(-3px)}}
+.whatsnew-jump{animation:whatsnew-jump .7s ease 3}
 #whatsnew-archive-link{font-size:.85rem;color:inherit;text-decoration:underline;opacity:.7}
 #whatsnew-archive-link:hover{opacity:1}
 </style>
@@ -163,6 +162,14 @@ function plugin_whatsnew_render_modal(array $tpl): void {
   var forced    = {$force_js};
   var csrfToken = {$csrf_token};
   var dismissing = false;
+
+  function jumpReopenBtn() {
+    var btn = document.getElementById('whatsnew-reopen-btn');
+    if (!btn) return;
+    btn.classList.remove('whatsnew-jump');
+    void btn.offsetWidth;
+    btn.classList.add('whatsnew-jump');
+  }
 
   function hideModal(never) {
     if (dismissing) return;
@@ -182,9 +189,10 @@ function plugin_whatsnew_render_modal(array $tpl): void {
         .then(function (r) { return r.json(); })
         .then(function (d) { console.log('[whatsnew dismiss]', d); })
         .catch(function (e) { console.error('[whatsnew dismiss error]', e); })
-        .finally(function () { overlay.style.display = 'none'; });
+        .finally(function () { overlay.style.display = 'none'; jumpReopenBtn(); });
     } else {
       overlay.style.display = 'none';
+      jumpReopenBtn();
     }
   }
 
@@ -199,6 +207,12 @@ function plugin_whatsnew_render_modal(array $tpl): void {
     var okBtn = document.getElementById('whatsnew-ok');
     if (okBtn) okBtn.disabled = false;
   };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', jumpReopenBtn);
+  } else {
+    jumpReopenBtn();
+  }
 
   if (forced) {
     if (document.readyState === 'loading') {
