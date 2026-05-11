@@ -69,7 +69,8 @@ function plugin_whatsnew_display() {
     $hash       = $announcement['version_hash'];
     $user_id    = (int) Session::getLoginUserID();
     $force_show = isset($_GET['whatsnew']) && $_GET['whatsnew'] === '1';
-    $dismissed  = PluginWhatsnewAnnouncement::isUserDismissed($user_id, $hash);
+    $session_dismissed = !empty($_SESSION['plugin_whatsnew_session_dismissed'][$hash]);
+    $dismissed  = PluginWhatsnewAnnouncement::isUserDismissed($user_id, $hash) || $session_dismissed;
     $show_modal = !$dismissed || $force_show;
 
     plugin_whatsnew_render_modal([
@@ -175,23 +176,26 @@ function plugin_whatsnew_render_modal(array $tpl): void {
     if (dismissing) return;
     dismissing = true;
 
-    if (never && !forced) {
-      // Await server confirmation before hiding so a fast refresh cannot
-      // cause the modal to reappear (dismissal record must exist first).
-      var okBtn = document.getElementById('whatsnew-ok');
-      okBtn.disabled = true;
+    var okBtn = document.getElementById('whatsnew-ok');
+    okBtn.disabled = true;
 
+    if (!forced) {
+      // Always notify the server: permanent (never=1) writes to DB,
+      // temporary (never=0) writes to session so the modal won't
+      // reappear on tab navigation within the same login session.
       var fd = new FormData();
       fd.append('version_hash', hash);
+      fd.append('never', never ? '1' : '0');
       fd.append('_glpi_csrf_token', csrfToken);
 
       fetch(url, { method: 'POST', credentials: 'same-origin', body: fd })
         .then(function (r) { return r.json(); })
         .then(function (d) { console.log('[whatsnew dismiss]', d); })
         .catch(function (e) { console.error('[whatsnew dismiss error]', e); })
-        .finally(function () { overlay.style.display = 'none'; jumpReopenBtn(); });
+        .finally(function () { overlay.style.display = 'none'; dismissing = false; jumpReopenBtn(); });
     } else {
       overlay.style.display = 'none';
+      dismissing = false;
       jumpReopenBtn();
     }
   }
